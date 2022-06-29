@@ -26,13 +26,13 @@ struct Jugador{
 void leer_linea(char arr[], int tam);
 
 ///Crea un nuevo jugador
-void registro_jugador(Jugador jugadores[]);
+void registro_jugador(Jugador jugadores[], int &cantJugadoresActivos);
 
 ///Recibe array de jugadores y un alias y chequea si ya existe ese alias
 bool alias_existente(Jugador jugadores[], char alias[]);
 
 ///Recibe array jugadores e imprime sus datos
-void listado_jugadores(Jugador jugadores[]);
+void listado_jugadores(Jugador jugadores[], int cantJugadoresActivos);
 
 ///Modifica un jugador
 void modificar_jugador(Jugador jugadores[]);
@@ -41,14 +41,14 @@ void modificar_jugador(Jugador jugadores[]);
 void imprimir_datos(Jugador jugadores[]);
 
 ///Elimina un jugador a partir de su alias
-void eliminar_jugador(Jugador jugadores[]);
-
+void eliminar_jugador(Jugador jugadores[], int &cantJugadoresActivos);
 
 int main()
 {
 
     Jugador jugadores[cantJugadores];
     char leo[2];
+    int cantJugadoresActivos = 0;
 
     //Recorre el arreglo de jugadores y setea que estan inactivos
     for(int i=0 ; i<10 ; i++){
@@ -56,13 +56,13 @@ int main()
     }
 
     do{
-        printf("\nMENU: \n(R)egistrar \n(L)istado \n(J)ugar \n(D)atos \n(M)odificar \n(E)liminar \n(S)alir \n");
+        printf("MENU: \n(R)egistrar \n(L)istado \n(J)ugar \n(D)atos \n(M)odificar \n(E)liminar \n(S)alir \n");
         leer_linea(leo, 2);
 
         if(strcmp(leo,"R")==0 or strcmp(leo, "r")==0)
-            registro_jugador(jugadores);
+            registro_jugador(jugadores, cantJugadoresActivos);
         else if(strcmp(leo,"L")==0 or strcmp(leo, "l")==0)
-            listado_jugadores(jugadores);
+            listado_jugadores(jugadores, cantJugadoresActivos);
         else if(strcmp(leo,"J")==0 or strcmp(leo, "j")==0)
             printf("J");
         else if(strcmp(leo,"D")==0 or strcmp(leo, "d")==0)
@@ -70,7 +70,7 @@ int main()
         else if(strcmp(leo,"M")==0 or strcmp(leo, "m")==0)
             modificar_jugador(jugadores);
         else if(strcmp(leo,"E")==0 or strcmp(leo, "e")==0)
-            eliminar_jugador(jugadores);
+            eliminar_jugador(jugadores, cantJugadoresActivos);
         else if(strcmp(leo,"S")!=0 and strcmp(leo, "s")!=0)
             printf("Esta opcion no es valida");
 
@@ -96,7 +96,7 @@ void leer_linea(char arr[],int tam){
 
 
 ///Crea un nuevo jugador
-void registro_jugador(Jugador jugadores[]){
+void registro_jugador(Jugador jugadores[], int &cantJugadoresActivos){
 
     int pos = 0;
     bool disponible = false, aliasDisponible;
@@ -118,7 +118,7 @@ void registro_jugador(Jugador jugadores[]){
             leer_linea(alias, tamAlias);
             aliasDisponible = alias_existente(jugadores, alias);
             if(aliasDisponible) {
-                printf("No podes usar este alias");
+                printf("No podes usar este alias\n");
             }else{
                 strcpy(jugadores[pos-1].alias, alias);
             }
@@ -135,9 +135,10 @@ void registro_jugador(Jugador jugadores[]){
         getchar();
         //jugadores[pos-1].puntos = 0;
         jugadores[pos-1].activo = true;
+        cantJugadoresActivos++;
 
     } else {
-        printf("No hay espacio para registrar jugadores");
+        printf("No hay espacio para registrar jugadores\n");
     }
 
 }
@@ -161,7 +162,7 @@ bool alias_existente(Jugador jugadores[], char alias[]){
 
 
 ///Recibe array jugadores e imprime sus datos
-void listado_jugadores(Jugador jugadores[]){
+void listado_jugadores(Jugador jugadores[], int cantJugadoresActivos){
 
     int pos, pos2, valorMayor = 0, posValorMayor, mayorAnterior;
     bool existenJugadores = false;
@@ -174,7 +175,7 @@ void listado_jugadores(Jugador jugadores[]){
 
 
     //Itera sobre array jugadoresOrdenados
-    for(pos=0 ; pos<cantJugadores ; pos++){
+    for(pos=0 ; pos<cantJugadoresActivos ; pos++){
         //Itera sobre array jugadores
         for(pos2=0 ; pos2<cantJugadores ; pos2++){
             if(jugadores[pos2].activo){
@@ -198,7 +199,7 @@ void listado_jugadores(Jugador jugadores[]){
     }
 
     if(!existenJugadores){
-        printf("\nNo existen jugadores para imprimir");
+        printf("\nNo existen jugadores para imprimir\n");
     } else {
         for(int i=0 ; i<cantJugadores ; i++){
             if(jugadoresOrdenados[i].activo){
@@ -257,7 +258,7 @@ void modificar_jugador(Jugador jugadores[]){
                 scanf("%d", &jugadores[posJugador].edad);
                 getchar();
             } else if(strcmp(leo,"v")!=0 and strcmp(leo, "V")!=0){
-                printf("Esta opcion no es valida");
+                printf("Esta opcion no es valida\n");
             }
 
         }while(strcmp(leo,"V")!=0 and strcmp(leo, "v")!=0);
@@ -279,7 +280,7 @@ void imprimir_datos(Jugador jugadores[]){
     leer_linea(alias, tamAlias);
     posJugador = encuentra_jugador(jugadores, alias);
 
-    if(posJugador != -1) {
+    if(posJugador != -1 && jugadores[posJugador].activo == true) {
 
         printf("\nAlias: %s", jugadores[posJugador].alias);
         printf("\nNombre: %s", jugadores[posJugador].nombre);
@@ -295,7 +296,7 @@ void imprimir_datos(Jugador jugadores[]){
 
 
 ///Elimina un jugador a partir de su alias
-void eliminar_jugador(Jugador jugadores[]){
+void eliminar_jugador(Jugador jugadores[], int &cantJugadoresActivos){
 
     char alias[tamAlias];
     int posJugador;
@@ -307,6 +308,8 @@ void eliminar_jugador(Jugador jugadores[]){
     if(posJugador != -1) {
 
         jugadores[posJugador].activo = false;
+        jugadores[posJugador].puntos = 0;
+        cantJugadoresActivos--;
 
     } else {
         printf("Este jugador no existe\n");
