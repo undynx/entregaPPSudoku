@@ -1,7 +1,8 @@
 # depslib dependency file v1.0
-1656459983 source:c:\users\admin\proyectosgit\principios de la programacion - ejercicios\ejercicios en c\sudoku2\sudoku2\main.cpp
+1656796409 source:c:\users\admin\proyectosgit\principios de la programacion - ejercicios\ejercicios en c\sudoku2\sudoku2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
+	<time.h>
 

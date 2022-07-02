@@ -34,8 +34,6 @@ void show_elements(int sudoku[][size], int cant_elem);
 void generar_sudoku_valido(int sudoku[][size], int cant_elem);
 
 /// Requerida - Validar que el candidato no esta en la Fila & Columna
-bool es_candidato(int sudoku[][size], int num, int fila, int columna);
-
 bool es_candidato2(int sudoku[][size], int num, int fila, int columna);
 
 /// Validar que el candidato no esta en el Area
@@ -327,38 +325,6 @@ void generar_sudoku_valido(int sudoku[][size], int cant_elem)
     show_elements(sudoku, cant_elem);
 }
 
-bool es_candidato(int sudoku[][size], int num, int fila, int columna)
-{
-    int pos;
-    bool candFilaColumna = false, filaCand = true, columnaCand = true;
-
-    // Dado un numero evaluo que no este en la fila
-    for (pos = 0; pos < size; pos++)
-    {
-        if (num == sudoku[fila][pos])
-        {
-            filaCand = false;
-        }
-    }
-
-    // Dado un numero evaluo que no este en la columna
-    for (pos = 0; pos < size; pos++)
-    {
-        if (num == sudoku[pos][columna])
-        {
-            columnaCand = false;
-        }
-    }
-
-    // Si el numero evaluado no esta en la fila y la columna es un candidato
-    if (filaCand && columnaCand)
-    {
-        candFilaColumna = true;
-    }
-
-    return candFilaColumna;
-}
-
 bool es_candidato2(int sudoku[][size], int num, int fila, int columna)
 {
     int pos;
@@ -428,7 +394,7 @@ void crear_candidatos(int sudoku[][size], int fila, int columna, bool candidatos
         num = pos + 1;
 
         // Validar que el numero no se encuentre en la Fila & Columna
-        candFilaColumna = es_candidato(sudoku, num, fila, columna);
+        candFilaColumna = es_candidato2(sudoku, num, fila, columna);
 
         // Si el numero no esta en la Fila & Columna entos valido que no este en el Area
         if (candFilaColumna)
