@@ -94,6 +94,8 @@ bool sudoku_valido(int sudoku[][tamSudoku]);
 ///Devuelve true si el trablero esta resuelto en su completitud
 bool sudoku_resuelto(int sudoku[][tamSudoku]);
 
+void funcion_mentira(Jugador jugadores[]);
+
 
 /////////////////////////////
 
@@ -108,13 +110,13 @@ int main()
         jugadores[i].activo = false;
     }
 
-    jugadores[0].activo = true;
+    /*jugadores[0].activo = true;
     strcpy(jugadores[0].alias, "mei");
     strcpy(jugadores[0].nombre, "Maite");
     strcpy(jugadores[0].apellido, "Martinez");
     jugadores[0].edad = 23;
     jugadores[0].puntos = 10;
-    cantJugadoresActivos ++;
+    cantJugadoresActivos ++;*/
 
 
     do{
@@ -125,7 +127,8 @@ int main()
             registro_jugador(jugadores, cantJugadoresActivos);
 
         else if(strcmp(leo,"L")==0 or strcmp(leo, "l")==0)
-            listado_jugadores(jugadores, cantJugadoresActivos);
+            //listado_jugadores(jugadores, cantJugadoresActivos);
+            funcion_mentira(jugadores);
 
         else if(strcmp(leo,"J")==0 or strcmp(leo, "j")==0)
             if(cantJugadoresActivos>0){
@@ -232,6 +235,20 @@ bool alias_existente(Jugador jugadores[], char alias[]){
     return existeAlias;
 }
 
+///
+void funcion_mentira(Jugador jugadores[]){
+
+    for(int posJugador = 0; posJugador < 9 ; posJugador++){
+        printf("\nAlias: %s", jugadores[posJugador].alias);
+        printf("\nNombre: %s", jugadores[posJugador].nombre);
+        printf("\nApellido: %s", jugadores[posJugador].apellido);
+        printf("\nEdad %d", jugadores[posJugador].edad);
+        printf("\nPuntaje total: %d \n", jugadores[posJugador].puntos);
+        printf("\nEsta activo? %d \n", jugadores[posJugador].activo);
+    }
+
+}
+
 
 ///Recibe array jugadores e imprime sus datos
 void listado_jugadores(Jugador jugadores[], int cantJugadoresActivos){
@@ -244,7 +261,6 @@ void listado_jugadores(Jugador jugadores[], int cantJugadoresActivos){
     for(int i=0 ; i<10 ; i++){
         jugadoresOrdenados[i].activo = false;
     }
-
 
     //Itera sobre array jugadoresOrdenados
     for(pos=0 ; pos<cantJugadoresActivos ; pos++){
@@ -292,8 +308,10 @@ int encuentra_jugador(Jugador jugadores[], char alias[]){
 
     do{
         if(strcmp(alias, jugadores[pos].alias)==0){
-            aliasExistente = true;
-            posicion = pos;
+            if(jugadores[pos].activo){
+                aliasExistente = true;
+                posicion = pos;
+            }
         }
         pos++;
     }while(aliasExistente == false and pos<cantJugadores);
@@ -393,13 +411,15 @@ void eliminar_jugador(Jugador jugadores[], int &cantJugadoresActivos){
 void jugar(Jugador jugadores[]){
 
     char leo[2], aliasJugador[tamAlias];
-    int puntosAsignar=0, numMostrar, posJugador, sudoku[tamSudoku][tamSudoku];
+    int puntosAsignar=0, numMostrar, posJugador = -1, sudoku[tamSudoku][tamSudoku], filaIngresar, colIngresar, numIngresar;
 
     //Encuentra la posicion del jugador
     do{
         printf("Ingresa un alias registrado: ");
         leer_linea(aliasJugador, tamAlias);
+        printf("%s\n", aliasJugador);
         posJugador = encuentra_jugador(jugadores, aliasJugador);
+        printf("%d", posJugador);
     }while(posJugador == -1);
 
     //Elige el nivel del juego
@@ -415,7 +435,7 @@ void jugar(Jugador jugadores[]){
             numMostrar = 40;
         }else if(strcmp(leo, "d")==0 or strcmp(leo, "D")==0){
             puntosAsignar = 61;
-            numMostrar = 20;
+            numMostrar = 80;
         } else {
             printf("Esta opcion no es valida\n");
         }
@@ -426,10 +446,8 @@ void jugar(Jugador jugadores[]){
     generar_sudoku_valido(sudoku, numMostrar);
     imprimir_sudoku(sudoku);
 
-    int filaIngresar, colIngresar, numIngresar;
-    printf("Si queres rendirte ingresa -1, si necesitas ayuda ingresa -2\n");
-
     do{
+        printf("Si queres rendirte ingresa -1, si necesitas ayuda ingresa -2\n");
         //Valida que el numero este entre 1 y 9
         do{
             printf("Elegi el numero: ");
