@@ -120,17 +120,15 @@ int main()
 
 
     do{
-        printf("MENU: \n(R)egistrar \n(L)istado \n(J)ugar \n(D)atos \n(M)odificar \n(E)liminar \n(S)alir \n");
+        printf("MENU: \n(R)egistrar \n(L)istado \n(J)ugar \n(D)atos \n(M)odificar \n(E)liminar \n(S)alir \n\n");
         leer_linea(leo, 2);
 
         if(strcmp(leo,"R")==0 or strcmp(leo, "r")==0)
             registro_jugador(jugadores, cantJugadoresActivos);
 
-        else if(strcmp(leo,"L")==0 or strcmp(leo, "l")==0)
-            //listado_jugadores(jugadores, cantJugadoresActivos);
-            funcion_mentira(jugadores);
-
-        else if(strcmp(leo,"J")==0 or strcmp(leo, "j")==0)
+        else if(strcmp(leo,"L")==0 or strcmp(leo, "l")==0){
+            listado_jugadores(jugadores, cantJugadoresActivos);
+        }else if(strcmp(leo,"J")==0 or strcmp(leo, "j")==0)
             if(cantJugadoresActivos>0){
                 jugar(jugadores);
             }else{
@@ -193,7 +191,7 @@ void registro_jugador(Jugador jugadores[], int &cantJugadoresActivos){
             leer_linea(alias, tamAlias);
             aliasDisponible = alias_existente(jugadores, alias);
             if(aliasDisponible) {
-                printf("No podes usar este alias\n");
+                printf("No podes usar este alias\n\n");
             }else{
                 strcpy(jugadores[pos-1].alias, alias);
             }
@@ -205,15 +203,13 @@ void registro_jugador(Jugador jugadores[], int &cantJugadoresActivos){
         printf("Edad: ");
         scanf("%d", &jugadores[pos-1].edad);
         getchar();
-        printf("Puntos: ");
-        scanf("%d", &jugadores[pos-1].puntos);
-        getchar();
-        //jugadores[pos-1].puntos = 0;
+        printf("\n");
+        jugadores[pos-1].puntos = 0;
         jugadores[pos-1].activo = true;
         cantJugadoresActivos++;
 
     } else {
-        printf("No hay espacio para registrar jugadores\n");
+        printf("No hay espacio para registrar jugadores\n\n");
     }
 
 }
@@ -235,70 +231,58 @@ bool alias_existente(Jugador jugadores[], char alias[]){
     return existeAlias;
 }
 
-///
-void funcion_mentira(Jugador jugadores[]){
-
-    for(int posJugador = 0; posJugador < 9 ; posJugador++){
-        printf("\nAlias: %s", jugadores[posJugador].alias);
-        printf("\nNombre: %s", jugadores[posJugador].nombre);
-        printf("\nApellido: %s", jugadores[posJugador].apellido);
-        printf("\nEdad %d", jugadores[posJugador].edad);
-        printf("\nPuntaje total: %d \n", jugadores[posJugador].puntos);
-        printf("\nEsta activo? %d \n", jugadores[posJugador].activo);
-    }
-
-}
-
-
 ///Recibe array jugadores e imprime sus datos
 void listado_jugadores(Jugador jugadores[], int cantJugadoresActivos){
-
-    int pos, pos2, valorMayor = 0, posValorMayor, mayorAnterior;
+    int i, ind_Act, ind_Jug, cont=1;
     bool existenJugadores = false;
-    Jugador jugadoresOrdenados[cantJugadores];
+    Jugador jugaOrd[cantJugadores], jdor;
 
     //Recorre el arreglo de jugadores ordenados y setea que estan inactivos
-    for(int i=0 ; i<10 ; i++){
-        jugadoresOrdenados[i].activo = false;
+    for(i=0 ; i<cantJugadores ; i++){
+        if(jugadores[i].activo){
+            jugaOrd[i].activo=jugadores[i].activo; //Se lleva el estado
+            strcpy(jugaOrd[i].alias,jugadores[i].alias); //Se lleva el alias
+            jugaOrd[i].puntos=jugadores[i].puntos; //Se lleva los puntos
+            existenJugadores=true;
+        }else{
+            jugaOrd[i].activo=false;
+        }
     }
 
-    //Itera sobre array jugadoresOrdenados
-    for(pos=0 ; pos<cantJugadoresActivos ; pos++){
+    //Itera sobre array jugaOrd
+    for(ind_Jug=0 ; ind_Jug<cantJugadores-1 ; ind_Jug++){ //Total de jugadores
         //Itera sobre array jugadores
-        for(pos2=0 ; pos2<cantJugadores ; pos2++){
-            if(jugadores[pos2].activo){
-                if(pos==0){
-                    if(jugadores[pos2].puntos > valorMayor){
-                        valorMayor = jugadores[pos2].puntos;
-                        posValorMayor = pos2;
-                    }
-                } else {
-                    if(jugadores[pos2].puntos > valorMayor && jugadores[pos2].puntos < mayorAnterior){
-                        valorMayor = jugadores[pos2].puntos;
-                        posValorMayor = pos2;
-                    }
-                }
-                existenJugadores = true;
+        for(ind_Act=0 ; ind_Act<cantJugadores-1 ; ind_Act++){ //
+            if(jugaOrd[ind_Act].puntos>jugaOrd[ind_Act+1].puntos){
+                // Como es mayor, copia los datos a jdor
+                    jdor.activo=jugaOrd[ind_Act].activo;
+                    strcpy(jdor.alias,jugaOrd[ind_Act].alias);
+                    jdor.puntos=jugaOrd[ind_Act].puntos;
+
+                //Muevo jugaOrd[ind_Act+1] para la anterior posicion
+                    jugaOrd[ind_Act].activo=jugaOrd[ind_Act+1].activo;
+                    strcpy(jugaOrd[ind_Act].alias,jugaOrd[ind_Act+1].alias);
+                    jugaOrd[ind_Act].puntos=jugaOrd[ind_Act+1].puntos;
+
+                //Muevo los datos de Jdor a jugaOrd[ind_Act+1]
+                    jugaOrd[ind_Act+1].activo=jdor.activo;
+                    strcpy(jugaOrd[ind_Act+1].alias,jdor.alias);
+                    jugaOrd[ind_Act+1].puntos=jdor.puntos;
             }
         }
-        mayorAnterior = valorMayor;
-        valorMayor = 0;
-        jugadoresOrdenados[pos]=jugadores[posValorMayor];
     }
 
     if(!existenJugadores){
-        printf("\nNo existen jugadores para imprimir\n");
+        printf("\nNo existen jugadores para imprimir\n\n");
     } else {
         for(int i=0 ; i<cantJugadores ; i++){
-            if(jugadoresOrdenados[i].activo){
-                printf("\nAlias: %s", jugadoresOrdenados[i].alias);
-                printf("\nPuntos: %d \n", jugadoresOrdenados[i].puntos);
+            if(jugaOrd[i].activo){
+                printf("\nAlias: %s", jugaOrd[i].alias);
+                printf("\nPuntos: %d \n\n", jugaOrd[i].puntos);
             }
         }
     }
-
 }
-
 
 ///Recibe array de jugadores y un alias y devuelve en que posicion esta ese jugador, o -1 si no existe
 int encuentra_jugador(Jugador jugadores[], char alias[]){
@@ -334,7 +318,7 @@ void modificar_jugador(Jugador jugadores[]){
         printf("Que deseas modificar?");
 
         do{
-            printf("\n(N)ombre \n(A)pellido \n(E)dad \n(V)olver al menu\n");
+            printf("\n(N)ombre \n(A)pellido \n(E)dad \n(V)olver al menu\n\n");
             leer_linea(leo, 2);
 
             if(strcmp(leo,"n")==0 or strcmp(leo, "N")==0){
@@ -354,7 +338,7 @@ void modificar_jugador(Jugador jugadores[]){
         }while(strcmp(leo,"V")!=0 and strcmp(leo, "v")!=0);
 
     }else{
-        printf("Este jugador no existe\n");
+        printf("Este jugador no existe\n\n");
     }
 
 }
@@ -376,10 +360,10 @@ void imprimir_datos(Jugador jugadores[]){
         printf("\nNombre: %s", jugadores[posJugador].nombre);
         printf("\nApellido: %s", jugadores[posJugador].apellido);
         printf("\nEdad %d", jugadores[posJugador].edad);
-        printf("\nPuntaje total: %d \n", jugadores[posJugador].puntos);
+        printf("\nPuntaje total: %d \n\n", jugadores[posJugador].puntos);
 
     } else {
-        printf("Este jugador no existe\n");
+        printf("Este jugador no existe\n\n");
     }
 
 }
@@ -402,7 +386,7 @@ void eliminar_jugador(Jugador jugadores[], int &cantJugadoresActivos){
         cantJugadoresActivos--;
 
     } else {
-        printf("Este jugador no existe\n");
+        printf("Este jugador no existe\n\n");
     }
 
 }
@@ -419,12 +403,11 @@ void jugar(Jugador jugadores[]){
         leer_linea(aliasJugador, tamAlias);
         printf("%s\n", aliasJugador);
         posJugador = encuentra_jugador(jugadores, aliasJugador);
-        printf("%d", posJugador);
     }while(posJugador == -1);
 
     //Elige el nivel del juego
     do{
-        printf("Que nivel deseas jugar? \n(F)acil \n(N)ormal \n(D)ificil \n");
+        printf("\nQue nivel deseas jugar? \n(F)acil \n(N)ormal \n(D)ificil \n\n");
         leer_linea(leo, 2);
 
         if(strcmp(leo, "F")==0 or strcmp(leo, "f")==0){
@@ -435,9 +418,9 @@ void jugar(Jugador jugadores[]){
             numMostrar = 40;
         }else if(strcmp(leo, "d")==0 or strcmp(leo, "D")==0){
             puntosAsignar = 61;
-            numMostrar = 80;
+            numMostrar = 20;
         } else {
-            printf("Esta opcion no es valida\n");
+            printf("Esta opcion no es valida\n\n");
         }
     }while(strcmp(leo, "F")!=0 and strcmp(leo, "f")!=0 and strcmp(leo, "N")!=0 and strcmp(leo, "n")!=0 and strcmp(leo, "d")!=0 and strcmp(leo, "D")!=0);
 
@@ -479,11 +462,11 @@ void jugar(Jugador jugadores[]){
                 sudoku[filaIngresar][colIngresar] = numIngresar;
                 imprimir_sudoku(sudoku);
             } else {
-                printf("Este numero no es valido para esta celda\n");
+                printf("Este numero no es valido para esta celda\n\n");
             }
 
         }else{
-            printf("Te rendiste! :( \n");
+            printf("Te rendiste! :( \n\n");
         }
 
     }while(!sudoku_resuelto(sudoku) && sudoku_valido(sudoku) && numIngresar != -1);
