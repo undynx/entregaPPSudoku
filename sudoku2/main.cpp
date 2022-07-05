@@ -18,8 +18,6 @@ struct Jugador{
     int edad;
     int puntos;
     bool activo;
-    int historial[tamHistorial];
-
 };
 
 //////////////////////////////
@@ -94,8 +92,6 @@ bool sudoku_valido(int sudoku[][tamSudoku]);
 ///Devuelve true si el trablero esta resuelto en su completitud
 bool sudoku_resuelto(int sudoku[][tamSudoku]);
 
-void funcion_mentira(Jugador jugadores[]);
-
 
 /////////////////////////////
 
@@ -110,15 +106,6 @@ int main()
         jugadores[i].activo = false;
     }
 
-    /*jugadores[0].activo = true;
-    strcpy(jugadores[0].alias, "mei");
-    strcpy(jugadores[0].nombre, "Maite");
-    strcpy(jugadores[0].apellido, "Martinez");
-    jugadores[0].edad = 23;
-    jugadores[0].puntos = 10;
-    cantJugadoresActivos ++;*/
-
-
     do{
         printf("MENU: \n(R)egistrar \n(L)istado \n(J)ugar \n(D)atos \n(M)odificar \n(E)liminar \n(S)alir \n\n");
         leer_linea(leo, 2);
@@ -128,13 +115,13 @@ int main()
 
         else if(strcmp(leo,"L")==0 or strcmp(leo, "l")==0){
             listado_jugadores(jugadores, cantJugadoresActivos);
+
         }else if(strcmp(leo,"J")==0 or strcmp(leo, "j")==0)
             if(cantJugadoresActivos>0){
                 jugar(jugadores);
             }else{
                 printf("No existen jugadores registrados para jugar\n");
             }
-
         else if(strcmp(leo,"D")==0 or strcmp(leo, "d")==0)
             imprimir_datos(jugadores);
 
@@ -145,7 +132,7 @@ int main()
             eliminar_jugador(jugadores, cantJugadoresActivos);
 
         else if(strcmp(leo,"S")!=0 and strcmp(leo, "s")!=0)
-            printf("Esta opcion no es valida");
+            printf("Esta opcion no es valida\n");
 
     }while(strcmp(leo,"S")!=0 and strcmp(leo, "s")!=0);
 
@@ -288,7 +275,7 @@ void listado_jugadores(Jugador jugadores[], int cantJugadoresActivos){
 int encuentra_jugador(Jugador jugadores[], char alias[]){
 
     int posicion = -1, pos = 0;
-    bool aliasExistente;
+    bool aliasExistente = false;
 
     do{
         if(strcmp(alias, jugadores[pos].alias)==0){
